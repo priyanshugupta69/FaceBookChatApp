@@ -26,7 +26,7 @@ const fbSecret = process.env.facebook_app_secret;
 const passportAuth = passport.use(new FacebookStrategy({
     clientID: fbId,
     clientSecret: fbSecret,
-    callbackURL: "http://localhost:4000/auth/facebook/callback",
+    callbackURL: "https://facebookchatapp.onrender.com/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'email'] 
   },
   function(accessToken, refreshToken, profile, cb) {
