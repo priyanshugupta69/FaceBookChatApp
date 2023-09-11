@@ -34,7 +34,16 @@ app.use(passport.session());
 //     // ...
 // });
 
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next(); // User is authenticated, continue to the next middleware or route handler
+    }
+    res.redirect('/auth/facebook'); // User is not authenticated, redirect to login page
+  }
 
+app.get("/", isAuthenticated, (req, res) => {
+    res.send("You are on home page")
+})
 app.post("/webhook", (req, res) => {
     let body = req.body;
   
@@ -98,7 +107,7 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect('/getPages');
+    res.redirect('/');
   });
 
 
