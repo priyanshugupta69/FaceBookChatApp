@@ -9,13 +9,15 @@ passport.serializeUser((user, cb) => {
  });
 
 passport.deserializeUser((id, cb) => { 
-    User.findOne({id:id}, (err, user) => {   
-        if (err) {
+    const findUser = async () => {
+        try{
+            const result = await User.findOne({id:id});
+            cb(null, result);
+        }catch(err){
             console.log(err);
-        } else {  
-            cb(null,user);
         }
-    });
+      }
+    findUser();
     
 });
 dotenv.config();
@@ -24,16 +26,18 @@ const fbSecret = process.env.facebook_app_secret;
 const passportAuth = passport.use(new FacebookStrategy({
     clientID: fbId,
     clientSecret: fbSecret,
-    callbackURL: "http://localhost:4000/webhook",
+    callbackURL: "http://localhost:4000/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'email'] 
   },
   function(accessToken, refreshToken, profile, cb) {
     console.log("accessToken: ", accessToken);
     console.log("refreshToken: ", refreshToken);
+    profile.accessToken = accessToken;
     console.log("profile: ", profile);
     const userdata = {
         id: profile.id,
         name: profile.displayName,
+        accessToken: profile.accessToken
     }
     const user = new User(userdata);
 
